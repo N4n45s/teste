@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Three.js sombras e luz</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+  <div>
+  
+  <div	id="div">
+    <script type="module">
+      import * as THREE from 'https://threejs.org/build/three.module.js';
+      import Stats from 'https://threejs.org/examples/jsm/libs/stats.module.js';
+      import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
+
+      let stats = new Stats(); // Performance monitor, used to view the frame rate of Three.js rendering
+
+      // Criar div
+      let container = document.getElementById('div');
+      //document.body.appendChild(container);
+
+      // Criar scene
+      let scene = new THREE.Scene();
+
+      // Criar camera
+      let camera = new THREE.PerspectiveCamera( // Câmera de projeção em perspectiva
+        40, // Campo de visão, indicando a gama de ângulos que podem ser vistos
+        window.innerWidth / window.innerHeight, // A proporção da janela de renderização, definida como a proporção da janela do navegador
+        0.1, // A que distância da câmera para iniciar a renderização
+        2000 // A que distância da câmera está para cortar a renderização
+      );
+      camera.position.set(-10, 10, 40); // Defina a posição da câmera
+
+      // Criar um renderer
+      let renderer = new THREE.WebGLRenderer({
+        antialias: true, // Se deve executar anti-aliasing
+      });
+      renderer.setPixelRatio(window.devicePixelRatio); // Defina a proporção de pixels do dispositivo. Normalmente usado em dispositivos HiDPI para evitar a tela de saída borrada.
+      renderer.setSize(window.innerWidth, window.innerHeight); // Defina o tamanho do renderizador
+      renderer.shadowMap.enabled = true;
+      container.appendChild(renderer.domElement);
+
+      // Criar controller
+      let controls = new OrbitControls(camera, renderer.domElement);
+
+      // Criar object
+      const geometry = new THREE.BoxBufferGeometry(4, 4, 4); // Gerar geometria
+      const material = new THREE.MeshLambertMaterial({
+        // Gerar material
+        color: 0x00ff00,
+      });
+      const mesh = new THREE.Mesh(geometry, material); // Gerar malha
+      mesh.castShadow = true; // Se o objeto é renderizado no mapa de sombra, o valor padrão é falso
+      mesh.position.set(0, 3, 0); // definir a posição do objeto
+      scene.add(mesh); // adicionar à cena
+
+      // Criar plano
+      const planeGeometry = new THREE.PlaneGeometry(300, 300); // Gerar plano geometry
+      const planeMaterial = new THREE.MeshLambertMaterial({
+        // Gerar material
+        color: 0xcccccc,
+      });
+      const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial); // Gerar uma grade plana
+      planeMesh.receiveShadow = true; // Defina a grade plana como a superfície de projeção que aceita a sombra
+      planeMesh.rotation.x = -Math.PI / 2; //Girar 90 graus em torno do eixo X
+      scene.add(planeMesh); // adicionar à cena
+
+      // Criar luz direcional
+      const light = new THREE.DirectionalLight(0xffffff, 1); // Luz paralela, a cor é branca, a intensidade é 1
+      light.position.set(-40, 40, 20); // Defina a posição da fonte de luz
+      light.castShadow = true; // Permitir geração de sombra
+      light.target = mesh;
+      scene.add(light); // adicionar à cena
+
+     animate();
+
+      function animate() {
+        requestAnimationFrame(animate);
+        
+        mesh.rotation.z += 0.1;
+        mesh.rotation.y += 0.1;
+        
+        stats.begin();
+        renderer.render(scene, camera);
+        stats.end();
+      } //*/
+    </script>
+    </div>
+    </div>
+  </body>
+</html>
